@@ -3,6 +3,7 @@ package com.wangzh.circlewaveprogress;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
@@ -60,7 +61,7 @@ public class WaveView extends View
 		timer = new Timer();
 		mPaint = new Paint();
 		mWavePath = new Path();
-		levelPercent = 0.2f;
+		levelPercent = 0.65f;
 	}
 
 	@Override
@@ -141,12 +142,17 @@ public class WaveView extends View
 	@Override
 	protected void onDraw(Canvas canvas)
 	{
-		mPaint.setColor(0xff00BFFF);
+		//绘制外圆
+		mPaint.setColor(0x5043CD80);
+		mPaint.setStyle(Style.FILL_AND_STROKE);
+		mPaint.setAntiAlias(true);
+		canvas.drawCircle((float)(mViewWidth/2),(float)(mViewHeight/2),getWidth()/2,mPaint);
+        //绘制波形
+		mPaint.setColor(0x5000BFFF);
 		mPaint.setStyle(Style.STROKE);
 		mWavePath.reset();
 		int i = 0;
 		mWavePath.moveTo(mPointsList.get(0).getX(),mPointsList.get(0).getY());
-		//绘制波形
 		for (; i < mPointsList.size() - 2; i = i + 2)
 		{
 			mWavePath.quadTo(mPointsList.get(i + 1).getX(),
@@ -159,25 +165,47 @@ public class WaveView extends View
 		mWavePath.lineTo(mLeftSide, mViewHeight);
 		mWavePath.close();
 		mPaint.setStyle(Style.FILL);
-		mPaint.setColor(0xff00BFFF);
+		mPaint.setColor(0x7000BFFF);
 		canvas.drawPath(mWavePath, mPaint);
-	/*	//绘制遮罩层
+		//绘制左下方弧 遮罩层
 		mPaint.setColor(0xffffffff);
-		canvas.drawRect(new RectF(0,mLevelLineY,mViewWidth,mViewHeight),mPaint);*/
-		//绘制超过圆半径的遮罩 左边
-		/*mPaint.setColor(0xffffffff);
-		mPaint.setStyle(Style.FILL);
-		canvas.drawRect(0,mLevelLineY,mLevelLineXL,mViewHeight,mPaint);*/
-		//绘制波形下方扇形
-		mPaint.setColor(0xff00BFFF);
-		//canvas.drawArc(new RectF(0,mLevelLineY/2,mViewWidth,mViewHeight),0,180,true,mPaint);
 		mWavePath.reset();
-		mWavePath.moveTo(mLevelLineXL,mLevelLineY);
-		//绘制外圆
-		mPaint.setColor(0x5043CD80);
-		mPaint.setStyle(Style.FILL_AND_STROKE);
-		mPaint.setAntiAlias(true);
-		canvas.drawCircle((float)(mViewWidth/2),(float)(mViewHeight/2),getWidth()/2,mPaint);
+		mWavePath.moveTo(0,mLevelLineY);
+		mWavePath.lineTo(0,getHeight());
+		mWavePath.lineTo(getWidth()/2,getHeight());
+		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),90,90);
+		mWavePath.close();
+		canvas.drawPath(mWavePath,mPaint);
+		//绘制右下方弧  遮罩层
+		mWavePath.reset();
+		mWavePath.moveTo(getWidth(),mLevelLineY);
+		mWavePath.lineTo(getWidth(),getHeight());
+		mWavePath.lineTo(getWidth()/2,getHeight());
+		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),90,-90);
+		mWavePath.close();
+		canvas.drawPath(mWavePath,mPaint);
+		//绘制左上方弧 遮罩层
+		mWavePath.reset();
+		mWavePath.moveTo(0,getHeight()/2);
+		mWavePath.lineTo(0,0);
+		mWavePath.lineTo(getWidth()/2,0);
+		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),270,-90);
+		mWavePath.close();
+		canvas.drawPath(mWavePath,mPaint);
+		//绘制右上方弧 遮罩层
+		mWavePath.reset();
+		mWavePath.moveTo(getWidth()/2,0);
+		mWavePath.lineTo(getWidth(),0);
+		mWavePath.lineTo(getWidth(),getHeight()/2);
+		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),360,-90);
+		mWavePath.close();
+		canvas.drawPath(mWavePath,mPaint);
+
+		mPaint.setColor(Color.WHITE);
+		mPaint.setTextSize(60);
+		mPaint.setTextAlign(Paint.Align.CENTER);
+		canvas.drawText("西湖区",getWidth()/2,getHeight()/3,mPaint);
+		canvas.drawText("已搬600户",getWidth()/2,getHeight()/2+getHeight()/8,mPaint);
 	}
 
 	/**
