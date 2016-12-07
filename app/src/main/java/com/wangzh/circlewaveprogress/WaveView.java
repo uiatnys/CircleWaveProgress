@@ -155,18 +155,18 @@ public class WaveView extends View
 		mWavePath.moveTo(mPointsList.get(0).getX(),mPointsList.get(0).getY());
 		for (; i < mPointsList.size() - 2; i = i + 2)
 		{
-			mWavePath.quadTo(mPointsList.get(i + 1).getX(),
-				mPointsList.get(i + 1).getY(), mPointsList.get(i + 2)
-							.getX(),mPointsList.get(i + 2).getY());
+			mWavePath.quadTo(mPointsList.get(i + 1).getX()
+					, mPointsList.get(i + 1).getY(), mPointsList.get(i + 2).getX()
+					,mPointsList.get(i + 2).getY());
 		}
 		canvas.drawPath(mWavePath, mPaint);
 		//封闭波形
 		mWavePath.lineTo(mPointsList.get(i).getX(), mViewHeight);
-		mWavePath.lineTo(mLeftSide, mViewHeight);
+		mWavePath.lineTo(mLeftSide<0?0:mLeftSide, mViewHeight);
 		mWavePath.close();
 		mPaint.setStyle(Style.FILL);
 		mPaint.setColor(0x7000BFFF);
-		canvas.drawPath(mWavePath, mPaint);
+		canvas.drawPath(mWavePath,mPaint);
 		//绘制左下方弧 遮罩层
 		mPaint.setColor(0xffffffff);
 		mWavePath.reset();
