@@ -64,7 +64,7 @@ public class WaveView extends View
 		timer = new Timer();
 		mPaint = new Paint();
 		mWavePath = new Path();
-		levelPercent = 0.7f;
+		levelPercent = 0.9f;
 	}
 
 	@Override
