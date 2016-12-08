@@ -32,7 +32,10 @@ public class WaveView extends View
 	private float mMoveLen;            //波形位移
 	public static final float SPEED = 1f;    //水波平移速度
 	private float mLeftSide;             //被隐藏的左边波形
-	private float angle;                   //角度
+	private float sweepAngle;               //弧形角度
+	private float startAngle;          //弧形角度起点
+	private float length; //水平线位置长度
+	private float radius;            //半径
 
 	private List<Point> mPointsList;
 	private Paint mPaint;
@@ -93,19 +96,27 @@ public class WaveView extends View
 			mViewHeight = MeasureSpec.getSize(heightMeasureSpec);
 			mViewWidth = MeasureSpec.getSize(widthMeasureSpec);
 			setMeasuredDimension(mViewWidth,mViewHeight);
-			//计算波形Y轴位置
-			if (levelPercent>0.5){
-				angle = (float) ((levelPercent-0.5)*2*90);
-			}else {
-				angle = (float) ((0.5 - levelPercent)*2*90);
-			}
-			mLevelLineY = mViewHeight * (1 - levelPercent);
-			mLevelLineXR = (float) ((mViewWidth/2) + (mViewWidth/2) * Math.cos(angle * Math.PI/180));
-			mLevelLineXL = (float) ((mViewWidth/2) - (mViewWidth/2) * Math.cos(angle * Math.PI/180));
 			// 根据View宽度计算波形峰值
 			mWaveHeight = mViewWidth /15.0f;
 			// 波长等于四倍View宽度也就是View中只能看到四分之一个波形，这样可以使起伏更明显
 			mWaveWidth = mViewWidth * 1.5f;
+			//计算波形Y轴位置
+/*			if (levelPercent>0.5){
+				angle = levelPercent-0.5f;
+			}else {
+				angle = 0.5f-levelPercent;
+			}*/
+			mLevelLineY = mViewHeight * (1 - levelPercent);
+			radius = mViewWidth/2;   //半径
+			if (levelPercent>0.5){
+				length = (float) Math.sqrt((Math.pow(radius,2)-(Math.pow((radius*(levelPercent-0.5)*2)-mWaveHeight,2))));
+				sweepAngle = (float) (Math.acos(length/radius)*(180/Math.PI) +180.5f);
+				startAngle = (float) (360 - Math.acos(length/radius));
+			}else {
+				length = (float) Math.sqrt((Math.pow(radius,2)-(Math.pow((radius*(0.5-levelPercent)*2)+mWaveHeight,2))));
+			}
+			mLevelLineXR = radius + length;
+			mLevelLineXL = radius - length;
 			// 左边隐藏的距离预留一个波形
 			mLeftSide = -mWaveWidth;
 			// 这里计算在可见的View宽度中能容纳几个波形，注意n上取整
@@ -145,12 +156,10 @@ public class WaveView extends View
 	{
 		//绘制外圆
 		mPaint.setColor(0x5043CD80);
-		mPaint.setStyle(Style.FILL_AND_STROKE);
+		mPaint.setStyle(Style.FILL);
 		mPaint.setAntiAlias(true);
 		canvas.drawCircle((float)(mViewWidth/2),(float)(mViewHeight/2),getWidth()/2,mPaint);
-		/*mPaint.setColor(0x5000BFFF);
-		canvas.drawLine(0,getHeight()/2,getWidth(),getHeight()/2,mPaint);*/
-		/*//绘制波形
+		//绘制波形
 		mPaint.setColor(0x5000BFFF);
 		mPaint.setStyle(Style.STROKE);
 		mWavePath.reset();
@@ -165,53 +174,18 @@ public class WaveView extends View
 		canvas.drawPath(mWavePath, mPaint);
 		//封闭波形
 		mWavePath.lineTo(mPointsList.get(i).getX(), mLevelLineY+mWaveHeight);
-		mWavePath.lineTo(mLeftSide<0?0:mLeftSide, mLevelLineY+mWaveHeight);
+		mWavePath.lineTo(mLeftSide, mLevelLineY+mWaveHeight);
 		mWavePath.close();
 		mPaint.setStyle(Style.FILL);
 		mPaint.setColor(0x7000BFFF);
-		canvas.drawPath(mWavePath,mPaint);*/
-		/*//绘制左下方弧 遮罩层
-		mPaint.setColor(0xffffffff);
-		mWavePath.reset();
-		mWavePath.moveTo(0,mLevelLineY);
-		mWavePath.lineTo(0,getHeight());
-		mWavePath.lineTo(getWidth()/2,getHeight());
-		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),90,90);
-		mWavePath.close();
 		canvas.drawPath(mWavePath,mPaint);
-		//绘制右下方弧  遮罩层
-		mWavePath.reset();
-		mWavePath.moveTo(getWidth(),mLevelLineY);
-		mWavePath.lineTo(getWidth(),getHeight());
-		mWavePath.lineTo(getWidth()/2,getHeight());
-		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),90,-90);
-		mWavePath.close();
-		canvas.drawPath(mWavePath,mPaint);
-		//绘制左上方弧 遮罩层
-		mWavePath.reset();
-		mWavePath.moveTo(0,getHeight()/2);
-		mWavePath.lineTo(0,0);
-		mWavePath.lineTo(getWidth()/2,0);
-		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),270,-90);
-		mWavePath.close();
-		canvas.drawPath(mWavePath,mPaint);
-		//绘制右上方弧 遮罩层
-		mWavePath.reset();
-		mWavePath.moveTo(getWidth()/2,0);
-		mWavePath.lineTo(getWidth(),0);
-		mWavePath.lineTo(getWidth(),getHeight()/2);
-		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),360,-90);
-		mWavePath.close();
-		canvas.drawPath(mWavePath,mPaint);*/
-
 		//绘制水波下面背景
 		mPaint.setStyle(Style.FILL);
-		mPaint.setColor(0xff000000);
-		mPaint.setStrokeWidth(10);
+		mPaint.setColor(0x7000BFFF);
 		mWavePath.reset();
-		mWavePath.moveTo(getWidth()/2,mLevelLineY);
-		mWavePath.lineTo(mLevelLineXR,mLevelLineY);
-		//mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),340,220);
+		mWavePath.moveTo(getWidth()/2,mLevelLineY+mWaveHeight);
+		mWavePath.lineTo(mLevelLineXR,mLevelLineY+mWaveHeight);
+		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),startAngle,sweepAngle);
 		mWavePath.close();
 		canvas.drawPath(mWavePath,mPaint);
 	}
