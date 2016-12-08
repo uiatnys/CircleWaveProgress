@@ -48,7 +48,7 @@ public class TestView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mPath.moveTo(0,getHeight()/2);
+       /* mPath.moveTo(0,getHeight()/2);
         canvas.drawText("1",0,getHeight()/2,mPaint);
         mPath.lineTo(0,getHeight());
         canvas.drawText("2",0,getHeight(),mPaint);
@@ -80,5 +80,31 @@ public class TestView extends View {
         mPath.lineTo(getWidth(),0);
         mPath.lineTo(getWidth(),getHeight()/2);
         mPath.arcTo(new RectF(0,0,getWidth(),getHeight()),360,-90);
+        mPath.close();
+        canvas.drawPath(mPath,mPaint);*/
+       /* mPath.moveTo(getWidth(),getHeight()/2);
+        mPath.lineTo(getWidth(),getHeight()/2);
+        mPath.arcTo(new RectF(0,0,getWidth(),getHeight()),0,180);
+        mPath.close();
+        canvas.drawPath(mPath,mPaint);*/
+
+        mPath.reset();
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setColor(0xff00fa9a);
+        mPath.moveTo(getWidth()/2,getHeight()/2);
+        mPath.quadTo(getWidth()/2+getWidth()/4,getHeight()/2-100,getWidth(),getHeight()/2);
+        mPaint.setTextSize(30);
+        canvas.drawText("1",getWidth()/2,getHeight()/2,mPaint);
+        mPath.close();
+        canvas.drawPath(mPath,mPaint);
+       /* mPaint.setColor(0xffffffff);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPath.reset();
+        mPath.moveTo(getWidth()/2,getHeight()/2);
+        mPath.quadTo(getWidth()/4,getHeight()/2+100,0,getHeight()/2);
+        mPaint.setTextSize(30);
+        canvas.drawText("1",getWidth()/2,getHeight()/2,mPaint);
+        mPath.close();
+        canvas.drawPath(mPath,mPaint);*/
     }
 }

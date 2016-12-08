@@ -61,7 +61,7 @@ public class WaveView extends View
 		timer = new Timer();
 		mPaint = new Paint();
 		mWavePath = new Path();
-		levelPercent = 0.65f;
+		levelPercent = 0.7f;
 	}
 
 	@Override
@@ -94,9 +94,10 @@ public class WaveView extends View
 			mViewWidth = MeasureSpec.getSize(widthMeasureSpec);
 			setMeasuredDimension(mViewWidth,mViewHeight);
 			//计算波形Y轴位置
-			angle = 180 * levelPercent;
-			if (angle>90){
-				angle = 180-angle;
+			if (levelPercent>0.5){
+				angle = (float) ((levelPercent-0.5)*2*90);
+			}else {
+				angle = (float) ((0.5 - levelPercent)*2*90);
 			}
 			mLevelLineY = mViewHeight * (1 - levelPercent);
 			mLevelLineXR = (float) ((mViewWidth/2) + (mViewWidth/2) * Math.cos(angle * Math.PI/180));
@@ -138,7 +139,7 @@ public class WaveView extends View
 
 	/**
 	 * @param canvas
-     */
+	 */
 	@Override
 	protected void onDraw(Canvas canvas)
 	{
@@ -147,7 +148,9 @@ public class WaveView extends View
 		mPaint.setStyle(Style.FILL_AND_STROKE);
 		mPaint.setAntiAlias(true);
 		canvas.drawCircle((float)(mViewWidth/2),(float)(mViewHeight/2),getWidth()/2,mPaint);
-        //绘制波形
+		/*mPaint.setColor(0x5000BFFF);
+		canvas.drawLine(0,getHeight()/2,getWidth(),getHeight()/2,mPaint);*/
+		/*//绘制波形
 		mPaint.setColor(0x5000BFFF);
 		mPaint.setStyle(Style.STROKE);
 		mWavePath.reset();
@@ -161,13 +164,13 @@ public class WaveView extends View
 		}
 		canvas.drawPath(mWavePath, mPaint);
 		//封闭波形
-		mWavePath.lineTo(mPointsList.get(i).getX(), mViewHeight);
-		mWavePath.lineTo(mLeftSide<0?0:mLeftSide, mViewHeight);
+		mWavePath.lineTo(mPointsList.get(i).getX(), mLevelLineY+mWaveHeight);
+		mWavePath.lineTo(mLeftSide<0?0:mLeftSide, mLevelLineY+mWaveHeight);
 		mWavePath.close();
 		mPaint.setStyle(Style.FILL);
 		mPaint.setColor(0x7000BFFF);
-		canvas.drawPath(mWavePath,mPaint);
-		//绘制左下方弧 遮罩层
+		canvas.drawPath(mWavePath,mPaint);*/
+		/*//绘制左下方弧 遮罩层
 		mPaint.setColor(0xffffffff);
 		mWavePath.reset();
 		mWavePath.moveTo(0,mLevelLineY);
@@ -199,13 +202,18 @@ public class WaveView extends View
 		mWavePath.lineTo(getWidth(),getHeight()/2);
 		mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),360,-90);
 		mWavePath.close();
-		canvas.drawPath(mWavePath,mPaint);
+		canvas.drawPath(mWavePath,mPaint);*/
 
-		mPaint.setColor(Color.WHITE);
-		mPaint.setTextSize(60);
-		mPaint.setTextAlign(Paint.Align.CENTER);
-		canvas.drawText("西湖区",getWidth()/2,getHeight()/3,mPaint);
-		canvas.drawText("已搬600户",getWidth()/2,getHeight()/2+getHeight()/8,mPaint);
+		//绘制水波下面背景
+		mPaint.setStyle(Style.FILL);
+		mPaint.setColor(0xff000000);
+		mPaint.setStrokeWidth(10);
+		mWavePath.reset();
+		mWavePath.moveTo(getWidth()/2,mLevelLineY);
+		mWavePath.lineTo(mLevelLineXR,mLevelLineY);
+		//mWavePath.arcTo(new RectF(0,0,getWidth(),getHeight()),340,220);
+		mWavePath.close();
+		canvas.drawPath(mWavePath,mPaint);
 	}
 
 	/**

@@ -3,15 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:gravity="center_horizontal"
-    android:background="@mipmap/map"
+    android:background="#EEE8AA"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.wangzh.circlewaveprogress.MainActivity">
     <com.wangzh.circlewaveprogress.WaveView
+        android:layout_marginTop="100dp"
         android:layout_width="200dp"
         android:background="@null"
         android:layout_height="200dp"/>
+
+   <!-- <com.wangzh.circlewaveprogress.wave.WaveView
+        android:id="@+id/wave"
+        android:layout_marginTop="100dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"/>-->
 
     <com.wangzh.circlewaveprogress.TestView
         android:layout_marginTop="50dp"
